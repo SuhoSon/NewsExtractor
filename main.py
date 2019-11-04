@@ -37,6 +37,16 @@ noextractor = noun_extractor.Noun_Extractor(crawling_list)
 noextractor.start()
 print(">> 명사 추출 종료. " + "걸린 시간: {0:.2f}s\n".format(time.time() - extract_start))
 
+filename = "[{0}_{1}_{2}]title_counter.dict".format(option_dict['pages'],
+                            option_dict['start'], option_dict['end'])
+with open(filename, 'wb') as handle:
+    pickle.dump(noextractor.title_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+filename = "[{0}_{1}_{2}]body_counter.dict".format(option_dict['pages'],
+                            option_dict['start'], option_dict['end'])
+with open(filename, 'wb') as handle:
+    pickle.dump(noextractor.body_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 excel_start = time.time()
 print(">> 엑셀 저장 시작...")
 exmaker = excel_maker.Excel_Maker(noextractor, option_dict)
