@@ -20,13 +20,17 @@ option_saved_crawler = {'name': ('-c', '--crawler'),
                         'action': 'store'
                         }
 
+option_saved_counter = {'name': ('-t', '--counter'),
+                        'help': "The saved file for counting. If no option, make new file.",
+                        'action': 'store'
+                        }
 
 class Option_Parser:
     def __init__(self):
         self.parser = OptionParser()
 
     def start(self):
-        options = [option_pages, option_start, option_end, option_saved_crawler]
+        options = [option_pages, option_start, option_end, option_saved_crawler, option_saved_counter]
 
         for option in options:
             param = option['name']
@@ -39,7 +43,7 @@ class Option_Parser:
         for key, value in options.items():
             if value is None:
                 continue
-            if key is not 'c' and key is not 'crawler':
+            if (key is not 'c' or not 't') and (key is not 'crawler' or not 'counter'):
                 options[key] = int(value.strip().replace(".", "").replace("-", ""))
 
         return options

@@ -33,23 +33,34 @@ if option_dict['crawler'] is None:
 
 extract_start = time.time()
 print(">> 명사 추출 시작...")
-noextractor = noun_extractor.Noun_Extractor(crawling_list)
-noextractor.start()
+if option_dict['counter'] is None:
+    noextractor = noun_extractor.Noun_Extractor(crawling_list)
+    noextractor.start()
+
+    title_counter = noextractor.title_counter
+    body_counter = noextractor.body_counter
+else:
+    print("Skipped...(\"{0}title_counter.dict, {0}body_counter.dict\")".format(option_dict['counter']))
+    with open(option_dict['counter'] + "title_counter.dict", 'rb') as handle:
+        title_counter = pickle.load(handle)
+    with open(option_dict['counter'] + "body_counter.dict", 'rb') as handle:
+        body_counter = pickle.load(handle)
 print(">> 명사 추출 종료. " + "걸린 시간: {0:.2f}s\n".format(time.time() - extract_start))
 
-filename = "[{0}_{1}_{2}]title_counter.dict".format(option_dict['pages'],
-                            option_dict['start'], option_dict['end'])
-with open(filename, 'wb') as handle:
-    pickle.dump(noextractor.title_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
+if option_dict['counter'] is None:
+    filename = "[{0}_{1}_{2}]title_counter.dict".format(option_dict['pages'],
+                                                        option_dict['start'], option_dict['end'])
+    with open(filename, 'wb') as handle:
+        pickle.dump(title_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-filename = "[{0}_{1}_{2}]body_counter.dict".format(option_dict['pages'],
-                            option_dict['start'], option_dict['end'])
-with open(filename, 'wb') as handle:
-    pickle.dump(noextractor.body_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    filename = "[{0}_{1}_{2}]body_counter.dict".format(option_dict['pages'],
+                                                       option_dict['start'], option_dict['end'])
+    with open(filename, 'wb') as handle:
+        pickle.dump(body_counter, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 excel_start = time.time()
 print(">> 엑셀 저장 시작...")
-exmaker = excel_maker.Excel_Maker(noextractor, option_dict)
+exmaker = excel_maker.Excel_Maker(title_counter, body_counter, option_dict)
 exmaker.start()
 print(">> 엑셀 저장 끝. " + "걸린 시간: {0:.2f}s\n".format(time.time() - excel_start))
 
